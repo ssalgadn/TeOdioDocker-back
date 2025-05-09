@@ -2,12 +2,16 @@
 __pycache__/
 app/__pycache__/
 .vercel/
+**/__pycache__/
+**/__pycache__/**
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
 
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
 
 # Distribution / packaging
 .Python
