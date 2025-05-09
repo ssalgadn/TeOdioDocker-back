@@ -1,9 +1,14 @@
 version: "3.12"
+
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.testing
     ports:
       - "8000:8000"
     volumes:
       - ./app:/app/app
     restart: always
+    environment:
+      - ENVIRONMENT=testing
