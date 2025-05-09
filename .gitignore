@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 app/__pycache__/
+.vercel/
 
 *.py[cod]
 *$py.class
@@ -47,3 +48,4 @@ coverage.xml
 
 # Jupyter Notebook
 .ip
+.vercel
