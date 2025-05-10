@@ -2,9 +2,9 @@ name: FastAPI CI Pipeline
 
 on:
   push:
-    branches: [ main, master, dev, development ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, master, dev, development ]
+    branches: [ main, develop ]
 
 jobs:
   lint-and-test:
