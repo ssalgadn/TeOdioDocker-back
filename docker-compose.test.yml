@@ -1,5 +1,4 @@
 services:
-  # Servicio principal para ejecutar los tests
   test:
     build:
       context: .
@@ -7,9 +6,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./tests:/app/tests
-      - ./test-results:/app/test-results
     environment:
       - ENVIRONMENT=test
       - PYTHONPATH=/app
-    command: pytest
-
+    command: pytest tests/ -v
