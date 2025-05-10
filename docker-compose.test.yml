@@ -9,4 +9,4 @@ services:
     environment:
       - ENVIRONMENT=test
       - PYTHONPATH=/app
-    command: pytest tests/ -v
+    command: python -m pytest tests/ -v
