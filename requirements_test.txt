@@ -3,4 +3,6 @@ uvicorn[standard]
 pytest
 httpx
 pytest-asyncio
+pytest==7.4.0
+pytest-cov==4.1.0
 coverage
