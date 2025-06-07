@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import cards
+from .routers import cards, product_router, price_router, store_router
 from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
@@ -20,6 +20,9 @@ app.add_middleware(
 )
 
 app.include_router(cards.router)
+app.include_router(product_router.router)
+app.include_router(price_router.router)
+app.include_router(store_router.router)
 
 
 @app.get("/")
