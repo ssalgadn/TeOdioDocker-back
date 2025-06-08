@@ -1,5 +1,9 @@
 fastapi
 uvicorn[standard]
+pydantic_settings
+requests
+PyJWT
+cryptography
 sqlalchemy
 psycopg2-binary
 alembic
