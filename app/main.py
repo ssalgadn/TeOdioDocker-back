@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Security
 from fastapi.security import HTTPBearer
-from .routers import cards
+from .routers import cards, product_router, price_router, store_router
 from fastapi.middleware.cors import CORSMiddleware
 from .utils.utils import VerifyToken
 from app.routers import auth
@@ -28,6 +28,9 @@ app.add_middleware(
 
 app.include_router(cards.router)
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
+app.include_router(product_router.router)
+app.include_router(price_router.router)
+app.include_router(store_router.router)
 
 @app.get("/")
 def read_root():
