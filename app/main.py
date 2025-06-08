@@ -3,6 +3,7 @@ from fastapi.security import HTTPBearer
 from .routers import cards
 from fastapi.middleware.cors import CORSMiddleware
 from .utils.utils import VerifyToken
+from app.routers import auth
 
 token_auth_scheme = HTTPBearer()
 
@@ -15,7 +16,7 @@ origins = [
     "https://te-odio-docker-front-git-main-teodiodockers-projects.vercel.app/"  
 ]
 app = FastAPI()
-auth = VerifyToken()
+verifyToken = VerifyToken()
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,7 +27,7 @@ app.add_middleware(
 )
 
 app.include_router(cards.router)
-
+app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 
 @app.get("/")
 def read_root():
@@ -45,6 +46,6 @@ def public():
 
 # new code 👇
 @app.get("/api/private")
-def private(auth_result: str = Security(auth.verify)): # 👈 Use Security and the verify method to protect your endpoints
+def private(auth_result: str = Security(verifyToken.verify)): # 👈 Use Security and the verify method to protect your endpoints
     """A valid access token is required to access this route"""
     return auth_result
