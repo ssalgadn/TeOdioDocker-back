@@ -11,7 +11,8 @@ from app.schema.product_schemas import (
 from app.cruds.product_crud import (
     get_products, 
     get_product_by_id,
-    create_product
+    create_product,
+    create_products_bulk
 )
 from app.models.models import Prices, Stores
 
@@ -108,3 +109,11 @@ async def create_product_endpoint(
         condition=product.condition
     )
     return ProductResponse.model_validate(db_product)
+
+@router.post("/createAll", response_model=List[ProductResponse], status_code=201)
+async def create_products_bulk_endpoint(
+    products: List[ProductCreate],
+    db: Session = Depends(get_db)
+):
+    db_products = create_products_bulk(db=db, products=products)
+    return [ProductResponse.model_validate(product) for product in db_products]
