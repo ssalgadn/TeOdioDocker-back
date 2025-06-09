@@ -36,7 +36,7 @@ class ProductBase(BaseModel):
 class ProductCreate(BaseModel):
     name: str
     img_url: Optional[str] = None
-    min_price: Optional[int] = None
+    price: Optional[int] = None
     game: str
     edition: Optional[str] = None
     language: Optional[str] = None

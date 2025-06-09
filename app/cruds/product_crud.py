@@ -67,3 +67,32 @@ def create_product(
     db.commit()
     db.refresh(db_product)
     return db_product
+
+
+def create_products_bulk(
+    db: Session,
+    products: List[Products]
+) -> List[Products]:
+    db_products = []
+    
+    for product in products:
+        db_product = Products(
+            name=product.name,
+            img_url=product.img_url,
+            min_price=product.min_price,
+            game=product.game,
+            edition=product.edition,
+            language=product.language,
+            description=product.description,
+            condition=product.condition,
+            product_type=product.product_type
+        )
+        db_products.append(db_product)
+    
+    db.add_all(db_products)
+    db.commit()
+    
+    for product in db_products:
+        db.refresh(product)
+    
+    return db_products
