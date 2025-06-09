@@ -102,7 +102,7 @@ async def create_product_endpoint(
         game=product.game,
         product_type=product.product_type,
         img_url=product.img_url,
-        min_price=product.price,
+        min_price=product.min_price,
         edition=product.edition,
         language=product.language,
         description=product.description,
