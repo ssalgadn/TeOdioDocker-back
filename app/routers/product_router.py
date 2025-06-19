@@ -14,7 +14,7 @@ from app.cruds.product_crud import (
     create_product,
     create_products_bulk
 )
-from app.models.models import Prices, Stores
+from app.models.models import Prices, Stores, GameEnum, ProductTypeEnum
 
 from app.database import get_db
 
@@ -26,8 +26,8 @@ async def get_products_endpoint(
     name: Optional[str] = Query(None),
     min_price: Optional[int] = Query(None),
     max_price: Optional[int] = Query(None),
-    game: Optional[str] = Query(None),
-    product_type: Optional[str] = Query(None),
+    game: Optional[GameEnum] = Query(None),
+    product_type: Optional[ProductTypeEnum] = Query(None),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000) # Asumo que no nos vamos a traer todo, meto un simple skip/limit al endpoint
 ):
