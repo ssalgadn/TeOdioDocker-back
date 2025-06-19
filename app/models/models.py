@@ -3,6 +3,19 @@ from sqlalchemy import Column, DateTime, func
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 from typing import List, Optional
+from enum import Enum
+
+class GameEnum(str, Enum):
+    POKEMON = "pokemon"
+    YUGIOH = "yugioh"
+    MAGIC = "magic"
+    OTHER = "other"
+
+class ProductTypeEnum(str, Enum):
+    BOOSTER = "booster"
+    SINGLES = "singles"
+    BUNDLE = "bundle"
+    OTHER = "other"
 
 class Stores(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)

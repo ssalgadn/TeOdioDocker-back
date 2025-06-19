@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
-from typing import List, Optional
+from typing import List, Optional, Union
+from app.models.models import GameEnum, ProductTypeEnum
 
 class StoreBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -26,23 +27,23 @@ class ProductBase(BaseModel):
     name: str
     img_url: Optional[str] = None
     min_price: Optional[int] = None
-    game: str
+    game: Union[GameEnum, str]
     edition: Optional[str] = None
     language: Optional[str] = None
     description: Optional[str] = None
     condition: Optional[str] = None
-    product_type: str
+    product_type: Union[ProductTypeEnum, str]
 
 class ProductCreate(BaseModel):
     name: str
     img_url: Optional[str] = None
     min_price: Optional[int] = None
-    game: str
+    game: GameEnum = GameEnum.OTHER
     edition: Optional[str] = None
     language: Optional[str] = None
     description: Optional[str] = None
     condition: Optional[str] = None
-    product_type: str
+    product_type: ProductTypeEnum = ProductTypeEnum.OTHER
 
 class ProductResponse(ProductBase):
     pass
