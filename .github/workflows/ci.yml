@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  lint-and-test:
+  lint-and-test-and-migrate:
     runs-on: ubuntu-latest
     
     steps:
@@ -36,5 +36,25 @@ jobs:
     - name: Test with pytest
       env:
         PYTHONPATH: ${{ github.workspace }}
+        AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+        AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+        AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+        AUTH0_API_AUDIENCE: ${{ secrets.AUTH0_API_AUDIENCE }}
+        AUTH0_ISSUER: ${{ secrets.AUTH0_ISSUER }}
+        AUTH0_ALGORITHMS: ${{ secrets.AUTH0_ALGORITHMS }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: |
         python -m pytest tests/ -v
+  
+    - name: Run Alembic migrations
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+        AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+        AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+        AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+        AUTH0_API_AUDIENCE: ${{ secrets.AUTH0_API_AUDIENCE }}
+        AUTH0_ISSUER: ${{ secrets.AUTH0_ISSUER }}
+        AUTH0_ALGORITHMS: ${{ secrets.AUTH0_ALGORITHMS }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      run: |
+        alembic upgrade head
