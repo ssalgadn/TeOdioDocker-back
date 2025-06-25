@@ -8,12 +8,14 @@ from app.schema.product_schemas import (
     StoreBase,
     ProductCreate
 )
+from app.schema.comment_schemas import CommentResponse
 from app.cruds.product_crud import (
     get_products, 
     get_product_by_id,
     create_product,
     create_products_bulk
 )
+from app.cruds.comment_crud import get_all_comments_by_product_id
 from app.models.models import Prices, Stores, GameEnum, ProductTypeEnum
 
 from app.database import get_db
@@ -74,7 +76,8 @@ async def get_product_detail(
             )
         )
         prices_with_stores.append(price_with_store)
-
+    product_comments = get_all_comments_by_product_id(db=db, product_id=product_id)
+    product_comments = [CommentResponse.model_validate(comment) for comment in product_comments]
     product_response = ProductWithPricesResponse(
         id=product.id,
         name=product.name,
@@ -86,7 +89,8 @@ async def get_product_detail(
         description=product.description,
         condition=product.condition,
         product_type=product.product_type,
-        prices=prices_with_stores
+        prices=prices_with_stores,
+        comments=product_comments
     )
 
     return product_response

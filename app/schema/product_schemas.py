@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional, Union
 from app.models.models import GameEnum, ProductTypeEnum
-
+from app.schema.comment_schemas import CommentResponse
 class StoreBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -50,6 +50,7 @@ class ProductResponse(ProductBase):
 
 class ProductWithPricesResponse(ProductBase):
     prices: List[PriceWithStore] = []
+    comments: List[CommentResponse] = []
 
 class PriceCreate(BaseModel):
     product_id: int
