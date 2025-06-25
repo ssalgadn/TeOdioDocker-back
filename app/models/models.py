@@ -36,7 +36,9 @@ class Products(SQLModel, table=True):
     condition: str | None = Field(default=None, max_length=20)
     product_type: str = Field(max_length=20, nullable=False)
 
+    
     prices: List["Prices"] = Relationship(back_populates="product")
+    comments: List["Comments"] = Relationship(back_populates="product")
 
 class Prices(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -48,3 +50,12 @@ class Prices(SQLModel, table=True):
 
     product: Optional[Products] = Relationship(back_populates="prices")
     store: Optional[Stores] = Relationship(back_populates="prices")
+
+class Comments(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user: str = Field(nullable=False, max_length=255)
+    product_id: int = Field(foreign_key="products.id", nullable=False)
+    text: str = Field(nullable=False, max_length=500)
+    date: datetime = Field(sa_column=Column(DateTime(timezone=True), default=func.now()))
+
+    product: Optional[Products] = Relationship(back_populates="comments")
