@@ -3,6 +3,20 @@ from pydantic import BaseModel, ConfigDict
 from typing import List, Optional, Union
 from app.models.models import GameEnum, ProductTypeEnum
 from app.schema.comment_schemas import CommentResponse
+
+class ReviewCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    user: str
+    store_id: int
+    rating: int  # Rating between 1 and 5
+class ReviewResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    user: str
+    store_id: int
+    rating: int  # Rating between 1 and 5
+    date: datetime
+
 class StoreBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -12,6 +26,10 @@ class StoreBase(BaseModel):
 class StoreCreate(BaseModel):
     name: str
     website_url: str
+
+class StoreResponse(StoreBase):
+    prices: List['PriceResponse'] = []
+    reviews: List['ReviewResponse'] = []
 
 class PriceWithStore(BaseModel):
     model_config = ConfigDict(from_attributes=True)

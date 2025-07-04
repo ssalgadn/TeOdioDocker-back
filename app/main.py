@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Security
 from fastapi.security import HTTPBearer
-from .routers import cards, product_router, price_router, store_router, comment_router
+from .routers import cards, product_router, price_router, store_router, comment_router, review_router
 from fastapi.middleware.cors import CORSMiddleware
 from .utils.utils import VerifyToken
 from app.routers import auth
@@ -32,6 +32,7 @@ app.include_router(product_router.router)
 app.include_router(price_router.router)
 app.include_router(store_router.router)
 app.include_router(comment_router.router)
+app.include_router(review_router.router)
 @app.get("/")
 def read_root():
     return {"msg": "Hello World"}
