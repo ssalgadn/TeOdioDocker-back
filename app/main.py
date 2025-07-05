@@ -36,20 +36,3 @@ app.include_router(review_router.router)
 @app.get("/")
 def read_root():
     return {"msg": "Hello World"}
-
-@app.get("/api/public")
-def public():
-    """No access token required to access this route"""
-
-    result = {
-        "status": "success",
-        "msg": ("Hello from a public endpoint! You don't need to be "
-                "authenticated to see this.")
-    }
-    return result
-
-# new code 👇
-@app.get("/api/private")
-def private(auth_result: str = Security(verifyToken.verify)): # 👈 Use Security and the verify method to protect your endpoints
-    """A valid access token is required to access this route"""
-    return auth_result
