@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     auth0_algorithms: str
     auth0_client_id: str
     auth0_client_secret: str
-    database_url: str
+    #database_url: str
     class Config:
         env_file = ".env"
         
