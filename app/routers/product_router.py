@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List, Optional
 from app.schema.product_schemas import (
     ProductResponse, 
@@ -31,7 +32,7 @@ async def get_products_endpoint(
     game: Optional[GameEnum] = Query(None),
     product_type: Optional[ProductTypeEnum] = Query(None),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000) # Asumo que no nos vamos a traer todo, meto un simple skip/limit al endpoint
+    limit: int = Query(100, ge=1, le=1000)
 ):
     products = get_products(
         db=db,
@@ -55,9 +56,24 @@ async def get_product_detail(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
+    latest_prices_subquery = (
+        db.query(
+            Prices.store_id,
+            func.max(Prices.scrapped_at).label('max_scrapped_at')
+        )
+        .filter(Prices.product_id == product_id)
+        .group_by(Prices.store_id)
+        .subquery()
+    )
+
     prices_query = (
         db.query(Prices, Stores)
         .join(Stores, Prices.store_id == Stores.id)
+        .join(
+            latest_prices_subquery, 
+            (Prices.store_id == latest_prices_subquery.c.store_id) & 
+            (Prices.scrapped_at == latest_prices_subquery.c.max_scrapped_at)
+        )
         .filter(Prices.product_id == product_id)
         .all()
     )
