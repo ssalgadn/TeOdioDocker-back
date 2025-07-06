@@ -7,8 +7,8 @@ from enum import Enum
 
 class GameEnum(str, Enum):
     POKEMON = "pokemon"
-    YUGIOH = "yugioh"
-    MAGIC = "magic"
+    YUGIOH = "yu-gi-oh"
+    MAGIC = "magic-the-gathering"
     OTHER = "other"
 
 class ProductTypeEnum(str, Enum):

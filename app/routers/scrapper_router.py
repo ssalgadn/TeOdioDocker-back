@@ -29,8 +29,10 @@ s3_service = S3ImageService(
 def map_game_to_enum(game: str) -> GameEnum:
     game_mapping = {
         "pokemon": GameEnum.POKEMON,
-        "magic-the-gathering": GameEnum.MAGIC,
+        "magic": GameEnum.MAGIC,
+        "magic_the_gathering": GameEnum.MAGIC,
         "yu-gi-oh": GameEnum.YUGIOH,
+        "yugioh": GameEnum.YUGIOH,
         "prismatic_evolutions": GameEnum.POKEMON,
         "twilight_masquerade": GameEnum.POKEMON,
         "temporal_forces": GameEnum.POKEMON
