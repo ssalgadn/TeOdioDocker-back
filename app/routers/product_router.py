@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List, Optional
 from app.schema.product_schemas import (
     ProductResponse, 
@@ -8,13 +9,15 @@ from app.schema.product_schemas import (
     StoreBase,
     ProductCreate
 )
+from app.schema.comment_schemas import CommentResponse
 from app.cruds.product_crud import (
     get_products, 
     get_product_by_id,
     create_product,
     create_products_bulk
 )
-from app.models.models import Prices, Stores
+from app.cruds.comment_crud import get_all_comments_by_product_id
+from app.models.models import Prices, Stores, GameEnum, ProductTypeEnum
 
 from app.database import get_db
 
@@ -26,10 +29,10 @@ async def get_products_endpoint(
     name: Optional[str] = Query(None),
     min_price: Optional[int] = Query(None),
     max_price: Optional[int] = Query(None),
-    game: Optional[str] = Query(None),
-    product_type: Optional[str] = Query(None),
+    game: Optional[GameEnum] = Query(None),
+    product_type: Optional[ProductTypeEnum] = Query(None),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000) # Asumo que no nos vamos a traer todo, meto un simple skip/limit al endpoint
+    limit: int = Query(100, ge=1, le=1000)
 ):
     products = get_products(
         db=db,
@@ -53,9 +56,24 @@ async def get_product_detail(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
+    latest_prices_subquery = (
+        db.query(
+            Prices.store_id,
+            func.max(Prices.scrapped_at).label('max_scrapped_at')
+        )
+        .filter(Prices.product_id == product_id)
+        .group_by(Prices.store_id)
+        .subquery()
+    )
+
     prices_query = (
         db.query(Prices, Stores)
         .join(Stores, Prices.store_id == Stores.id)
+        .join(
+            latest_prices_subquery, 
+            (Prices.store_id == latest_prices_subquery.c.store_id) & 
+            (Prices.scrapped_at == latest_prices_subquery.c.max_scrapped_at)
+        )
         .filter(Prices.product_id == product_id)
         .all()
     )
@@ -74,7 +92,8 @@ async def get_product_detail(
             )
         )
         prices_with_stores.append(price_with_store)
-
+    product_comments = get_all_comments_by_product_id(db=db, product_id=product_id)
+    product_comments = [CommentResponse.model_validate(comment) for comment in product_comments]
     product_response = ProductWithPricesResponse(
         id=product.id,
         name=product.name,
@@ -86,7 +105,8 @@ async def get_product_detail(
         description=product.description,
         condition=product.condition,
         product_type=product.product_type,
-        prices=prices_with_stores
+        prices=prices_with_stores,
+        comments=product_comments
     )
 
     return product_response

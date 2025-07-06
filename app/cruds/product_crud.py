@@ -1,15 +1,15 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from typing import List, Optional
-from app.models.models import Products
+from app.models.models import Products, GameEnum, ProductTypeEnum
 
 def get_products(
     db: Session,
     name: Optional[str] = None,
     min_price: Optional[int] = None,
     max_price: Optional[int] = None,
-    game: Optional[str] = None,
-    product_type: Optional[str] = None,
+    game: Optional[GameEnum] = None,
+    product_type: Optional[ProductTypeEnum] = None,
     skip: int = 0,
     limit: int = 100
 ) -> List[Products]:
@@ -27,10 +27,10 @@ def get_products(
         filters.append(Products.min_price <= max_price) # ASUMO que filtraremos por min_price del producto
 
     if game:
-        filters.append(Products.game.ilike(f"%{game}%"))
-
+        filters.append(Products.game == game)
+    
     if product_type:
-        filters.append(Products.product_type.ilike(f"%{product_type}%"))
+        filters.append(Products.product_type == product_type)
 
     if filters:
         query = query.filter(and_(*filters))
@@ -43,8 +43,8 @@ def get_product_by_id(db: Session, product_id: int) -> Optional[Products]:
 def create_product(
     db: Session,
     name: str,
-    game: str,
-    product_type: str,
+    game: GameEnum,
+    product_type: ProductTypeEnum,
     img_url: Optional[str] = None,
     min_price: Optional[int] = None,
     edition: Optional[str] = None,
