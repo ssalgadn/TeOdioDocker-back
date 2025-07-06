@@ -30,7 +30,7 @@ def map_game_to_enum(game: str) -> GameEnum:
     game_mapping = {
         "pokemon": GameEnum.POKEMON,
         "magic": GameEnum.MAGIC,
-        "magic_the_gathering": GameEnum.MAGIC,
+        "magic-the-gathering": GameEnum.MAGIC,
         "yu-gi-oh": GameEnum.YUGIOH,
         "yugioh": GameEnum.YUGIOH,
         "prismatic_evolutions": GameEnum.POKEMON,
