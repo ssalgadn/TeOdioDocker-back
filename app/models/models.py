@@ -23,6 +23,7 @@ class Stores(SQLModel, table=True):
     website_url: str = Field(nullable=False, max_length=255)
 
     prices: List["Prices"] = Relationship(back_populates="store")
+    reviews: List["Reviews"] = Relationship(back_populates="store")
 
 class Products(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -59,3 +60,12 @@ class Comments(SQLModel, table=True):
     date: datetime = Field(sa_column=Column(DateTime(timezone=True), default=func.now()))
 
     product: Optional[Products] = Relationship(back_populates="comments")
+
+class Reviews(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user: str = Field(nullable=False, max_length=255)
+    store_id: int = Field(foreign_key="stores.id", nullable=False)
+    rating: int = Field(ge=1, le=5, nullable=False)  # Rating between 1 and 5
+    date: datetime = Field(sa_column=Column(DateTime(timezone=True), default=func.now()))
+
+    store: Optional[Stores] = Relationship(back_populates="reviews")
