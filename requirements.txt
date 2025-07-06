@@ -8,3 +8,6 @@ sqlalchemy
 psycopg2-binary
 alembic
 sqlmodel
+boto3
+werkzeug
+

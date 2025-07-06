@@ -1,10 +1,10 @@
-from typing import Optional # 👈 new imports
+from typing import Optional 
 
-import jwt # 👈 new imports
-from fastapi import Depends, HTTPException, status # 👈 new imports
-from fastapi.security import SecurityScopes, HTTPAuthorizationCredentials, HTTPBearer # 👈 new imports
+import jwt 
+from fastapi import Depends, HTTPException, status 
+from fastapi.security import SecurityScopes, HTTPAuthorizationCredentials, HTTPBearer 
 
-from app.config import get_settings # 👈 new imports
+from app.config import get_settings 
 
 class UnauthorizedException(HTTPException):
     def __init__(self, detail: str, **kwargs):
@@ -17,7 +17,6 @@ class UnauthenticatedException(HTTPException):
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Requires authentication"
         )
 
-# 👇 new code
 class VerifyToken:
   """Does all the token verification using PyJWT"""
 
@@ -28,7 +27,7 @@ class VerifyToken:
     # use any of the keys available
     jwks_url = f'https://{self.config.auth0_domain}/.well-known/jwks.json'
     self.jwks_client = jwt.PyJWKClient(jwks_url)
-  # 👆 new code
+ 
 
   async def verify(self,
                      security_scopes: SecurityScopes,

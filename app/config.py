@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     auth0_client_id: str
     auth0_client_secret: str
     database_url: str
+    aws_access_key_id: str
+    aws_secret_access_key: str
     class Config:
         env_file = ".env"
         
