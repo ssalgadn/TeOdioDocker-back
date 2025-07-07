@@ -12,7 +12,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:3001",
     "https://tudominiofrontend.vercel.app",
-    "https://te-odio-docker-front.vercel.app/",
+    "https://te-odio-docker-front.vercel.app",
     "https://te-odio-docker-front-git-main-teodiodockers-projects.vercel.app/"  
 ]
 app = FastAPI()
