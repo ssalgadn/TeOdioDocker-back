@@ -14,16 +14,27 @@ from app.cruds.price_crud import create_price
 from app.models.models import Stores, Products, Prices, GameEnum, ProductTypeEnum
 from app.database import get_db
 from app.utils.s3_utils import S3ImageService
+from app.utils.parsing import sanitize_filename
+from app.external_services.images import upload_img_from_url
 
 load_dotenv()
 
 router = APIRouter(prefix="/scrapper", tags=["scrapper"])
 
+aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID')
+aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+
+if not aws_access_key_id or aws_access_key_id.strip() == '':
+    raise ValueError("AWS_ACCESS_KEY_ID environment variable is not set or empty")
+if not aws_secret_access_key or aws_secret_access_key.strip() == '':
+    raise ValueError("AWS_SECRET_ACCESS_KEY environment variable is not set or empty")
+
+
 s3_service = S3ImageService(
     bucket_name='teodiodocker-images',
     region_name='us-east-2',
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key,
 )
 
 def map_game_to_enum(game: str) -> GameEnum:
@@ -66,17 +77,6 @@ def create_price_from_scrapper(db: Session, item: ScrapperItem, product_id: int,
         url=item.url
     )
 
-def download_image_bytes(url: str) -> bytes:
-    response = requests.get(url, timeout=10)
-    response.raise_for_status()
-    return response.content
-
-def upload_img_from_url(url: str, filename: str, game_prefix: str) -> str:
-    image_bytes = download_image_bytes(url)
-    result = s3_service.upload_from_bytes(image_bytes, filename, game_prefix)
-    if not result["success"]:
-        raise Exception(f"Upload failed: {result['error']}")
-    return f"https://teodiodocker-images.s3.us-east-2.amazonaws.com/{result['object_key']}"
 
 @router.post("/bulk")
 async def process_scrapper_results(
@@ -93,9 +93,13 @@ async def process_scrapper_results(
 
             img_s3_url = None
             if item.img_url:
-                filename = f"{item.name.lower().replace(' ', '_')}.png"
-                game_prefix = item.game.lower().replace(" ", "_")
-                img_s3_url = upload_img_from_url(item.img_url, filename, game_prefix)
+                try:
+                    filename = f"{sanitize_filename(item.name)}.png"
+                    game_prefix = sanitize_filename(item.game.replace(" ", "_"))
+                    img_s3_url = upload_img_from_url(item.img_url, filename, game_prefix, s3_service)
+                except Exception as img_error:
+                    print(f"Image upload failed for {item.name}: {str(img_error)}")
+                    img_s3_url = None
 
             product = db.query(Products).filter(Products.name == item.name).first()
             if not product:
